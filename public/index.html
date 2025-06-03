@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="#" type="image/x-icon" />
+
+    <title>notes-taking</title>
+
+    <style>
+        *{
+            padding: 0  ;
+            margin: 0;
+            box-sizing: content-box;
+        }
+      #container {
+        /* div that contains form element main-form */
+        background: #a527be;
+        color: white;
+        font-family: cursive;
+        font-size: 1.25rem;
+      }
+
+      #main-form {
+        /* form element  */
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+      #labels {
+        /* labels for the inp-fields */
+        display: grid;
+      }
+      #inp-fields {
+        /* input and textarea */
+        padding: 4px;
+        margin: 0.625em;
+        display: grid;
+      }
+      input#heading {
+        margin: 0.125em;
+      }
+
+      textarea#content {
+        margin: 0.125em;
+        min-width: 25em;
+      }
+
+      #l1,
+      #l2 {
+        display:  inline-block;
+        border-color: salmon;
+        border-width: 0 3px 3px 0;
+        border-style: solid;
+        margin: 0.25em;
+        padding: 0.125em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>welcome to my very app</main>
+
+    <div id="container">
+      <form id="main-form">
+        <div id="labels">
+          <label for="heading" id="l1"> enter heading</label>
+          <label for="content" id="l2"> enter body</label>
+        </div>
+        <div id="inp-fields">
+          <input
+            type="text"
+            id="heading"
+            name="heading"
+            placeholder="enter some heading "
+          />
+          <textarea
+            name="content"
+            id="content"
+            placeholder="enter something you like"
+          ></textarea>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

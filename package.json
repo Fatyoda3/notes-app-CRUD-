@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.1",
+    "path": "^0.12.7"
+  },
+  "name": "!make-something",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./index.js "
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "fat-yoda",
+  "license": "ISC",
+  "description": "making a note app that will use mongodb free tier and express and vanilla js for frontend"
+}
