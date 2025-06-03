@@ -8,11 +8,11 @@
     <title>notes-taking</title>
 
     <style>
-        *{
-            padding: 0  ;
-            margin: 0;
-            box-sizing: content-box;
-        }
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: content-box;
+      }
       #container {
         /* div that contains form element main-form */
         background: #a527be;
@@ -48,17 +48,53 @@
 
       #l1,
       #l2 {
-        display:  inline-block;
+        display: inline-block;
         border-color: salmon;
         border-width: 0 3px 3px 0;
         border-style: solid;
         margin: 0.25em;
         padding: 0.125em;
       }
+      #notes {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        gap: 12px;
+      }
+      .notes-div {
+        padding: 0.25em;
+
+        /* display: flex;
+        justify-content: center;
+        align-items: center; */
+      }
+      .notes-div > h3 {
+        background: gray;
+
+        font-family: system-ui;
+        padding: 0.25em;
+        text-align: center;
+        /* height: max-content; */
+      }
+
+      .notes-div > p {
+        font-family: system-ui;
+
+        background: rgb(152, 66, 250);
+        color: white;
+        min-height: 100px;
+        text-align: justify;
+        padding: 10px;
+        font-weight: bolder;
+      }
+
+      .gray-out:hover {
+        background: #000;
+      }
     </style>
   </head>
   <body>
-    <main>welcome to my very app</main>
+    <main>welcome to my very note taking app</main>
 
     <div id="container">
       <form id="main-form">
@@ -79,7 +115,108 @@
             placeholder="enter something you like"
           ></textarea>
         </div>
+
+        <input type="submit" value="create" />
       </form>
     </div>
+    <button id="delete-note">toggle delete</button>
+    <div id="notes"></div>
   </body>
+  <script>
+    const form = document.querySelector("#main-form"); // get data to send to the server
+    const notes = document.querySelector("#notes"); // store all the notes retrived from the backend/database
+
+    const model = {
+      heading: null,
+      content: null,
+      id: null,
+
+      render() {
+        const container = document.createElement("div");
+        container.id = this.id;
+        const h = document.createElement("h3");
+        const p = document.createElement("p");
+
+        h.textContent = this.heading;
+        p.textContent = this.content;
+        container.classList.add("notes-div");
+
+        container.append(h, p);
+        notes.appendChild(container);
+      },
+    };
+
+    const getNotes = async () => {
+      try {
+        fetch("/api/get")
+          .then((res) => res.json())
+          .then((res) => {
+            res.forEach((el) => {
+              console.log(el);
+              model.heading = el.heading;
+              model.content = el.content;
+              model.id = el["_id"];
+
+              model.render();
+            });
+          })
+          .catch((err) => console.log(err));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getNotes();
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      try {
+        const fd = new FormData(form);
+        const urlparams = new URLSearchParams(fd);
+        console.log(urlparams.toString());
+
+        fetch("/api/create", {
+          method: "POST",
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+          },
+          body: urlparams.toString(),
+        });
+      } catch (ex) {
+        console.log(ex);
+      }
+    });
+
+    // delete notes logic
+
+    const del = document.querySelector("#delete-note");
+
+    del.addEventListener("click", (e) => {
+      console.log(notes.childNodes);
+      const notesArr = notes.childNodes;
+
+      notesArr.forEach((el) => {
+        el.classList.add("gray-out");
+        el.addEventListener("click", function () {
+          let q = prompt("delete this note ? ") || false;
+
+          if (q) {
+            const thisNote = this;
+            const id = this.id;
+            console.log(id);
+
+            try {
+              fetch("/api/delete/" + id, {
+                method: "DELETE",
+              })
+                .catch((err) => console.log(err))
+                .finally((e) => {thisNote.remove()});
+            } catch (ex) {
+              console.log(ex);
+            }
+          }
+        });
+      });
+    });
+  </script>
 </html>
