@@ -1,0 +1,10 @@
+1. Timestamps – Show “Created on” and “Last edited on” under each note.
+2. Empty-state Messaging – Display a friendly message when there are no notes.
+3. Inline Editing – Click a note’s text to edit it directly in place. --> done
+4. Note Count Display – Show “You have X notes” at the top. 
+5. Form Validation Feedback – Warn if heading or content is empty.
+6. Loading Indicator – Disable buttons and show “Loading…” during requests.
+7. Auto-Focus & Clear Form – Automatically focus the heading input on load and clear inputs after submission.
+8. Confirmation Toast/Snackbar – Briefly show “Note created!” or “Deleted!” messages after actions.
+9. Prevent Duplicate Headings – Check before creating that the heading isn’t already in use and warn the user.
+10. Expand/Collapse Long Notes – Allow collapsing lengthy notes down to a preview, with a “Read more” toggle.

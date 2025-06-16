@@ -15,7 +15,9 @@ const notesSchema = new mongoose.Schema({
 });
 
 const notesModel = mongoose.model("note", notesSchema);
+
 // const t =  await notesModel.create({heading:"HELLO WORLD" , content : "HI THIS IS FAT YODA "});
+
 
 app.post("/api/create", async (req, res) => {
   try {
@@ -39,6 +41,7 @@ app.post("/api/create", async (req, res) => {
 });
 
 app.get("/api/get", async (req, res) => {
+  console.log("notes are being collected and prepared ");
   try {
     let t = await notesModel.find({});
 
@@ -62,4 +65,26 @@ app.delete("/api/delete/:id", async (req, res) => {
   return res.status(200).send("DELETED content ");
 });
 
+app.put("/api/modify/:id", async (req, res) => {
+  let id = req.params.id;
+  console.log(req.params.id);
+
+  console.log(req.body);
+  const content = req.body.mC;
+  const heading = req.body.mT;
+  //  notesModel.findOneAndUpdate(
+  //   { _id: id },
+  //   { $set: { heading: heading ,/* }, $set: { */ content: content } }
+  // );
+  const changedNote = await notesModel.findOneAndUpdate(
+    { _id: id },
+    { $set: { heading: heading, content: content } },
+    { new: true } // new: true returns the updated doc
+  );
+
+  // console.log(changedNote);
+  res.send(changedNote);
+});
+
 //created all the basic routes like create a new note , get all previous notes , delete a note
+//now added way to modify existing notes

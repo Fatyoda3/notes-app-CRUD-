@@ -10,7 +10,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./index.js "
+    "dev": "nodemon --watch . --ignore node_modules --ignore .git --ignore .gitignore"
   },
   "type": "module",
   "keywords": [],

@@ -4,219 +4,306 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="#" type="image/x-icon" />
-
-    <title>notes-taking</title>
-
+    <title>Notes Taking App</title>
     <style>
       * {
         padding: 0;
         margin: 0;
-        box-sizing: content-box;
+        box-sizing: border-box;
       }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f3f3f3;
+        padding: 1rem;
+      }
+
+      main {
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
       #container {
-        /* div that contains form element main-form */
         background: #a527be;
         color: white;
-        font-family: cursive;
-        font-size: 1.25rem;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
       }
 
       #main-form {
-        /* form element  */
         display: flex;
-        align-items: center;
-        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
       }
+
       #labels {
-        /* labels for the inp-fields */
         display: grid;
+        gap: 0.5rem;
       }
+
       #inp-fields {
-        /* input and textarea */
-        padding: 4px;
-        margin: 0.625em;
         display: grid;
-      }
-      input#heading {
-        margin: 0.125em;
+        gap: 0.5rem;
       }
 
-      textarea#content {
-        margin: 0.125em;
-        min-width: 25em;
+      input,
+      textarea {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: none;
       }
 
-      #l1,
-      #l2 {
-        display: inline-block;
-        border-color: salmon;
-        border-width: 0 3px 3px 0;
-        border-style: solid;
-        margin: 0.25em;
-        padding: 0.125em;
+      input[type="submit"],
+      button {
+        padding: 0.5rem 1rem;
+        margin: 0.5rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
       }
+
+      #getNotes {
+        background-color: #ffc107;
+        color: #000;
+      }
+
+      #delete-note,
+      #modify-note {
+        background-color: #17a2b8;
+        color: white;
+      }
+
       #notes {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
       }
+
       .notes-div {
-        padding: 0.25em;
-
-        /* display: flex;
-        justify-content: center;
-        align-items: center; */
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        transition: 0.3s;
       }
-      .notes-div > h3 {
-        background: gray;
 
-        font-family: system-ui;
-        padding: 0.25em;
+      .notes-div:hover {
+        transform: scale(1.02);
+      }
+
+      .notes-div > h3 {
+        color: #333;
         text-align: center;
-        /* height: max-content; */
+        margin-bottom: 0.5rem;
       }
 
       .notes-div > p {
-        font-family: system-ui;
-
-        background: rgb(152, 66, 250);
-        color: white;
-        min-height: 100px;
+        color: #555;
         text-align: justify;
-        padding: 10px;
-        font-weight: bolder;
       }
 
       .gray-out:hover {
-        background: #000;
+        background: #eee;
+      }
+
+      .mark-change:hover {
+        background: #e0f7fa;
+      }
+
+      .msg {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: bold;
+        text-align: center;
       }
     </style>
   </head>
   <body>
-    <main>welcome to my very note taking app</main>
-
+    <main>Welcome to My Note-Taking App</main>
     <div id="container">
       <form id="main-form">
         <div id="labels">
-          <label for="heading" id="l1"> enter heading</label>
-          <label for="content" id="l2"> enter body</label>
+          <label for="heading">Enter Heading</label>
+          <label for="content">Enter Body</label>
         </div>
         <div id="inp-fields">
           <input
             type="text"
             id="heading"
             name="heading"
-            placeholder="enter some heading "
+            placeholder="Enter some heading"
           />
           <textarea
             name="content"
             id="content"
-            placeholder="enter something you like"
+            placeholder="Enter something you like"
           ></textarea>
         </div>
-
-        <input type="submit" value="create" />
+        <input type="submit" value="Create" />
       </form>
+      <button id="getNotes" onclick="getNotes()">Click to Get Notes</button>
     </div>
-    <button id="delete-note">toggle delete</button>
+    <button id="delete-note">Toggle Delete</button>
+    <button id="modify-note">Toggle Modify Notes</button>
     <div id="notes"></div>
-  </body>
-  <script>
-    const form = document.querySelector("#main-form"); // get data to send to the server
-    const notes = document.querySelector("#notes"); // store all the notes retrived from the backend/database
 
-    const model = {
-      heading: null,
-      content: null,
-      id: null,
+    <script>
+      const form = document.querySelector("#main-form");
+      const notes = document.querySelector("#notes");
+      const del = document.querySelector("#delete-note");
+      const modify = document.querySelector("#modify-note");
 
-      render() {
-        const container = document.createElement("div");
-        container.id = this.id;
-        const h = document.createElement("h3");
-        const p = document.createElement("p");
+      document.body.onload = () => getNotes();
 
-        h.textContent = this.heading;
-        p.textContent = this.content;
-        container.classList.add("notes-div");
+      const model = {
+        heading: null,
+        content: null,
+        id: null,
+        render() {
+          const container = document.createElement("div");
+          container.id = this.id;
+          const h = document.createElement("h3");
+          const p = document.createElement("p");
+          h.textContent = this.heading;
+          p.textContent = this.content;
+          container.classList.add("notes-div");
+          container.append(h, p);
+          notes.appendChild(container);
+        },
+      };
 
-        container.append(h, p);
-        notes.appendChild(container);
-      },
-    };
+      const getNotes = async () => {
+        try {
+          const res = await fetch("/api/get");
+          const data = await res.json();
+          notes.innerHTML = "";
+          data.forEach((el) => {
+            model.heading = el.heading;
+            model.content = el.content;
+            model.id = el["_id"];
+            model.render();
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      };
 
-    const getNotes = async () => {
-      try {
-        fetch("/api/get")
-          .then((res) => res.json())
-          .then((res) => {
-            res.forEach((el) => {
-              console.log(el);
-              model.heading = el.heading;
-              model.content = el.content;
-              model.id = el["_id"];
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          const fd = new FormData(form);
+          const urlparams = new URLSearchParams(fd);
+          await fetch("/api/create", {
+            method: "POST",
+            headers: {
+              "content-type": "application/x-www-form-urlencoded",
+            },
+            body: urlparams.toString(),
+          });
+          form.reset();
+          getNotes();
+        } catch (ex) {
+          console.log(ex);
+        }
+      });
 
-              model.render();
-            });
-          })
-          .catch((err) => console.log(err));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getNotes();
-
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      try {
-        const fd = new FormData(form);
-        const urlparams = new URLSearchParams(fd);
-        console.log(urlparams.toString());
-
-        fetch("/api/create", {
-          method: "POST",
-          headers: {
-            "content-type": "application/x-www-form-urlencoded",
-          },
-          body: urlparams.toString(),
-        });
-      } catch (ex) {
-        console.log(ex);
-      }
-    });
-
-    // delete notes logic
-
-    const del = document.querySelector("#delete-note");
-
-    del.addEventListener("click", (e) => {
-      console.log(notes.childNodes);
-      const notesArr = notes.childNodes;
-
-      notesArr.forEach((el) => {
-        el.classList.add("gray-out");
-        el.addEventListener("click", function () {
-          let q = prompt("delete this note ? ") || false;
-
-          if (q) {
-            const thisNote = this;
-            const id = this.id;
-            console.log(id);
-
-            try {
-              fetch("/api/delete/" + id, {
+      del.addEventListener("click", () => {
+        notes.querySelectorAll(".notes-div").forEach((el) => {
+          el.classList.add("gray-out");
+          el.addEventListener("click", async function handler() {
+            const confirmDelete = confirm("Delete this note?");
+            if (confirmDelete) {
+              await fetch(`/api/delete/${this.id}`, {
                 method: "DELETE",
-              })
-                .catch((err) => console.log(err))
-                .finally((e) => {thisNote.remove()});
-            } catch (ex) {
-              console.log(ex);
+              });
+              this.remove();
             }
-          }
+            el.removeEventListener("click", handler);
+          });
         });
       });
-    });
-  </script>
+
+      modify.addEventListener("click", () => {
+        notes.querySelectorAll(".notes-div").forEach((el) => {
+          el.classList.add("mark-change");
+          el.addEventListener(
+            "click",
+            function handler() {
+              const id = this.id;
+              const oldTitle = this.querySelector("h3").innerText;
+              const oldContent = this.querySelector("p").innerText;
+              const titleInput = document.createElement("input");
+              const contentInput = document.createElement("textarea");
+              const confirmBtn = document.createElement("button");
+              const statusMsg = document.createElement("div");
+
+              titleInput.value = oldTitle;
+              contentInput.value = oldContent;
+              confirmBtn.textContent = "Confirm";
+              confirmBtn.style.marginTop = "0.5rem";
+              statusMsg.classList.add("msg");
+
+              this.innerHTML = "";
+              this.append(titleInput, contentInput, confirmBtn, statusMsg);
+   
+
+              confirmBtn.onclick = async () => {
+                const newTitle = titleInput.value.trim();
+                const newContent = contentInput.value.trim();
+                if (!newTitle || !newContent) {
+                  statusMsg.textContent = "Title or content cannot be empty.";
+                  statusMsg.style.color = "red";
+                  return;
+                }
+                try {
+                  const res = await fetch(`/api/modify/${id}`, {
+                    method: "PUT",
+                    headers: {
+                      "content-type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({
+                      mT: newTitle,
+                      mC: newContent,
+                    }).toString(),
+                  });
+
+                  if (!res.ok) throw new Error("Update failed");
+
+                  const updatedNote = await res.json();
+
+                  statusMsg.textContent = "Note updated successfully!";
+                  statusMsg.style.color = "green";
+
+                  setTimeout(() => {
+                    while (this.firstChild) this.removeChild(this.firstChild);
+
+                    const updatedH = document.createElement("h3");
+                    updatedH.textContent = updatedNote.heading;
+
+                    const updatedP = document.createElement("p");
+                    updatedP.textContent = updatedNote.content;
+
+                    this.classList.remove("mark-change");
+                    this.append(updatedH, updatedP);
+                  }, 1000);
+                } catch (err) {
+                  console.error(err);
+                  statusMsg.textContent = "Failed to update.";
+                  statusMsg.style.color = "red";
+                }
+              };
+
+              el.removeEventListener("click", handler);
+            },
+            { once: true }
+          );
+        });
+      });
+    </script>
+  </body>
 </html>
